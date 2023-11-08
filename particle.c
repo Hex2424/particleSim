@@ -45,9 +45,10 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t colo
         currentParticle < currentGroupHandle->particles + particlesCount;
         currentParticle++)
     {
-        currentParticle->x = rand() % ARENA_X;
-        currentParticle->y = rand() % ARENA_Y;
+        currentParticle->x = (rand() % ARENA_X) / (ARENA_X / 2.0f) - 1;
+        currentParticle->y = (rand() % ARENA_Y) / (ARENA_X / 2.0f) - 1;
     }
+      
 
     particleCloud.currentIdx++;
 
