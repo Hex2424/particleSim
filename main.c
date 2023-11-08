@@ -1,39 +1,43 @@
 #include <stdio.h>
 #include <GL/glut.h>
 #include "particle.h"
-
-#define ARENA_X                 500
-#define ARENA_Y                 500
+#include "config.h"
 
 // #define MAX_PARTICLES_COUNT     10
 
-static ParticlesGroup_t particleGroups[] = {{10, 10, 50}, {20, 20, 50}};
-
-static uint16_t currentParticlesCount = 2;
-
-void display(void)
+void proccessParticleGroupDisplay(const ParticlesGroupHandle_t const group)
 {
-    glClear( GL_COLOR_BUFFER_BIT);
-    glColor3f(1.0, 1.0, 0.0);
+    glColor3f(RGB_R(group->color), RGB_G(group->color), RGB_B(group->color));
     
     glPointSize(5);
 
     glBegin(GL_POINTS);
 
-    for(uint16_t prtIdx = 0; prtIdx < currentParticlesCount; prtIdx++)
+    for(ParticleHandle_t prt = group->particles; prt < group->particles + group->groupSize; prt++)
     {
-        glVertex3f(particles[prtIdx].x, particles[prtIdx].y, 0.0);
+        glVertex3f(prt->x, prt->y, 0.0);
     }
 
     glEnd();
+}
+
+
+void display(void)
+{
+    glClear( GL_COLOR_BUFFER_BIT);
+
+    for(ParticlesGroupHandle_t currGroup = ParticleCloud_groupAt(0); currGroup < ParticleCloud_groupAt(ParticleCloud_getGroupsCount()); currGroup++)
+    {
+        proccessParticleGroupDisplay(currGroup);
+    }
 
     glFlush();
 }
 
 int main(int argc, char **argv)
 {
+    ParticleCloud_init(5);
 
-    
     glutInit(&argc, argv);
     glutInitDisplayMode ( GLUT_SINGLE | GLUT_RGB); // 1 buffer | enable colors
 
@@ -46,7 +50,7 @@ int main(int argc, char **argv)
     glLoadIdentity();                           // start with identity matrix
     glOrtho(0.0, ARENA_X, 0.0, ARENA_Y, 0.0, 1.0);   // setup a 10x10x2 viewing world
 
-
+    ParticleCloud_addNewGroup(100, RGB(255, 255, 255), Physics_physic(GRAVITY_FORCE, 1));
    
     glutDisplayFunc(display);
     glutMainLoop();

@@ -15,9 +15,18 @@
 #define PARTICLE_H_
 
 #include <stdint.h>
+#include <stdbool.h>
+#include "physics.h"
 
 typedef float coord_t;
 typedef uint32_t color_t;
+
+#define RGB(red, green, blue) (uint32_t)((((uint8_t)red) << 16) | (((uint8_t)green) << 8) | ((uint8_t)blue << 0))
+
+#define RGB_R(rgb) (((uint32_t)rgb >> 16) & 0xFF)
+#define RGB_G(rgb) (((uint32_t)rgb >> 8) & 0xFF)
+#define RGB_B(rgb) (((uint32_t)rgb >> 0) & 0xFF)
+
 
 // Particle as element created here
 typedef struct
@@ -31,9 +40,10 @@ typedef Particle_t* ParticleHandle_t;
 // Particle group is set of particles which shares same fate
 typedef struct
 {
-    ParticleHandle_t particlesCloud;
+    ParticleHandle_t particles;
     uint16_t groupSize;
     color_t color;
+    PhysicalProperties_t physics;
 }ParticlesGroup_t;
 
 typedef ParticlesGroup_t* ParticlesGroupHandle_t;
@@ -41,11 +51,15 @@ typedef ParticlesGroup_t* ParticlesGroupHandle_t;
 // Particle cloud is set of Particle groups and overall physic
 typedef struct
 {
-    ParticlesGroupHandle_t particlesCloud;
+    ParticlesGroupHandle_t groups;
     uint16_t cloudSize;
     uint16_t currentIdx;
 }ParticlesCloud_t;
 
 typedef ParticlesCloud_t* ParticlesCloudHandle_t;
 
+bool ParticleCloud_init(const uint16_t maxGroupsInCloud);
+bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t color, const PhysicalProperties_t physics);
+ParticlesGroupHandle_t ParticleCloud_groupAt(const uint16_t groupIdx);
+uint16_t ParticleCloud_getGroupsCount(void);
 #endif // PARTICLE_H_
