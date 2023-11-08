@@ -39,18 +39,15 @@ int main(int argc, char **argv)
     ParticleCloud_init(5);
 
     glutInit(&argc, argv);
-    glutInitDisplayMode ( GLUT_SINGLE | GLUT_RGB); // 1 buffer | enable colors
+    glutInitDisplayMode ( GLUT_SINGLE | GLUT_RGB);  // 1 buffer | enable colors
 
-    glutInitWindowPosition(1000, 100);      // window position
-    glutInitWindowSize(600, 600);           // window size 
+    glutInitWindowPosition(1000, 100);              // window position
+    glutInitWindowSize(ARENA_X, ARENA_Y);           // window size 
     glutCreateWindow ("square");
 
-    glClearColor(0.0, 0, 0, 0.0);               // black background
-    glMatrixMode(GL_PROJECTION);                // setup viewing projection
-    glLoadIdentity();                           // start with identity matrix
-    glOrtho(0.0, ARENA_X, 0.0, ARENA_Y, 0.0, 1.0);   // setup a 10x10x2 viewing world
+    glClearColor(0.0, 0, 0, 0.0);                   // black background
 
-    ParticleCloud_addNewGroup(100, RGB(255, 255, 255), Physics_physic(GRAVITY_FORCE, 1));
+    ParticleCloud_addNewGroup(20, RGB(255, 255, 255), Physics_physic(GRAVITY_FORCE, 1));
    
     glutDisplayFunc(display);
     glutMainLoop();
