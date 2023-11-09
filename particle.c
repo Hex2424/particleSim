@@ -1,3 +1,16 @@
+/**
+ * @file particle.c
+ *
+ * MORE INFO ABOUT THE FILE'S CONTENTS
+ *
+ * @copyright This file is a part of the project particleSim and is distributed under MIT license which
+ * should have been included with the project. If not see: https://choosealicense.com/licenses/mit/
+ *
+ * @author Markas Vielavičius (markas.vielavicius@bytewall.com)
+ *
+ * @date 2023-11-07
+ */
+
 #include "particle.h"
 #include "stdlib.h"
 #include "logger/logger.h"
@@ -28,6 +41,12 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t colo
 {
     ParticlesGroupHandle_t currentGroupHandle;
 
+    if(particleCloud.currentIdx >= particleCloud.cloudSize)
+    {
+        Log_e(TAG, "Cannot add new group to cloud, please increase cloud size, currently:%u", particleCloud.cloudSize);
+        return false;
+    }
+
     currentGroupHandle = particleCloud.groups + particleCloud.currentIdx;
 
     currentGroupHandle->color = color;
@@ -45,8 +64,8 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t colo
         currentParticle < currentGroupHandle->particles + particlesCount;
         currentParticle++)
     {
-        currentParticle->x = (rand() % ARENA_X) / (ARENA_X / 2.0f) - 1;
-        currentParticle->y = (rand() % ARENA_Y) / (ARENA_X / 2.0f) - 1;
+        currentParticle->x = (rand() % WINDOW_W) / (WINDOW_W / 2.0f) - 1;
+        currentParticle->y = (rand() % WINDOW_H) / (WINDOW_H / 2.0f) - 1;
     }
       
 

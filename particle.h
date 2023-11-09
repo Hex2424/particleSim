@@ -3,7 +3,7 @@
  *
  * MORE INFO ABOUT THE FILE'S CONTENTS
  *
- * @copyright This file is a part of the project Iguana and is distributed under MIT license which
+ * @copyright This file is a part of the project particleSim and is distributed under MIT license which
  * should have been included with the project. If not see: https://choosealicense.com/licenses/mit/
  *
  * @author Markas Vielavičius (markas.vielavicius@bytewall.com)
@@ -20,13 +20,6 @@
 
 typedef float coord_t;
 typedef uint32_t color_t;
-
-#define RGB(red, green, blue) (uint32_t)((((uint8_t)red) << 16) | (((uint8_t)green) << 8) | ((uint8_t)blue << 0))
-
-#define RGB_R(rgb) (((uint32_t)rgb >> 16) & 0xFF)
-#define RGB_G(rgb) (((uint32_t)rgb >> 8) & 0xFF)
-#define RGB_B(rgb) (((uint32_t)rgb >> 0) & 0xFF)
-
 
 // Particle as element created here
 typedef struct
