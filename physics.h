@@ -14,6 +14,8 @@
 #define PHYSICS_H_
 
 #include <stdint.h>
+#include "vector.h"
+
 
 typedef uint8_t EnabledPhysics_t;
 typedef float Mass_t;
@@ -31,5 +33,5 @@ typedef struct
 
 
 PhysicalProperties_t Physics_physic(const EnabledPhysics_t affectingPhysics, const Mass_t mass);
-
+void Physics_updatePhysics(float deltaTime);
 #endif // PHYSICS_H_

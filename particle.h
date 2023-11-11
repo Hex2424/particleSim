@@ -21,11 +21,19 @@
 typedef float coord_t;
 typedef uint32_t color_t;
 
-// Particle as element created here
 typedef struct
 {
     coord_t x;
     coord_t y;
+    Vector_t velocity;
+}ParticleState_t;
+
+// Particle as element created here
+typedef struct
+{
+    // To prevent calculations after state change
+    ParticleState_t originalState;
+    ParticleState_t newState;
 }Particle_t;
 
 typedef Particle_t* ParticleHandle_t;
@@ -45,6 +53,7 @@ typedef ParticlesGroup_t* ParticlesGroupHandle_t;
 typedef struct
 {
     ParticlesGroupHandle_t groups;
+
     uint16_t cloudSize;
     uint16_t currentIdx;
 }ParticlesCloud_t;

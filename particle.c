@@ -64,8 +64,10 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t colo
         currentParticle < currentGroupHandle->particles + particlesCount;
         currentParticle++)
     {
-        currentParticle->x = (rand() % WINDOW_W) / (WINDOW_W / 2.0f) - 1;
-        currentParticle->y = (rand() % WINDOW_H) / (WINDOW_H / 2.0f) - 1;
+        currentParticle->newState.x = (rand() % WINDOW_W) / (WINDOW_W / 2.0f) - 1;
+        currentParticle->newState.y = (rand() % WINDOW_H) / (WINDOW_H / 2.0f) - 1;
+
+        currentParticle->originalState = currentParticle->newState;
     }
       
 
