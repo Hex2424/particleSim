@@ -32,6 +32,6 @@
 #define PURPLE                  (RGB(138,43,226))
 
 void Display_init(int argc, char **argv);
-void Display_startRendering(void (* renderCallback)( void ) );
+void Display_startRendering(void (* renderCallback)( float deltaTime ) );
 
 #endif // DISPLAY_H_

@@ -16,7 +16,7 @@
 
 static void renderScene_(void);
 
-static void (* job)( void );
+static void (* job)( float deltaTime );
 
 void Display_init(int argc, char **argv)
 {
@@ -29,7 +29,7 @@ void Display_init(int argc, char **argv)
     glClearColor(0.0, 0.0, 0.0, 0.0);                 // black background
 }
 
-void Display_startRendering(void (* jobCallback)( void ) )
+void Display_startRendering(void (* jobCallback)( float deltaTime ) )
 {
     job = jobCallback;
     glutDisplayFunc(renderScene_);
@@ -38,7 +38,10 @@ void Display_startRendering(void (* jobCallback)( void ) )
 
 static void renderScene_(void)
 {
-    
+    static float delaySeconds = 0;
+    static int oldTimestamp = 0;
+    static int currentTimestamp = 0;
+
     glClear( GL_COLOR_BUFFER_BIT);
 
     for(ParticlesGroupHandle_t group = ParticleCloud_groupAt(0); group < ParticleCloud_groupAt(ParticleCloud_getGroupsCount()); group++)
@@ -55,7 +58,7 @@ static void renderScene_(void)
 
         for(ParticleHandle_t prt = group->particles; prt < group->particles + group->groupSize; prt++)
         {
-            glVertex3f(prt->x, prt->y, 0.0);
+            glVertex3f(prt->originalState.x, prt->originalState.y, 0.0);
         }
 
         glEnd();
@@ -63,7 +66,15 @@ static void renderScene_(void)
 
     glFlush();
     
+
     // calling job function
-    job();
+    job(delaySeconds);
+
+    currentTimestamp = glutGet(GLUT_ELAPSED_TIME);
+    delaySeconds = (currentTimestamp - oldTimestamp) / 1000.0f;
+    oldTimestamp = currentTimestamp;
+
+
+    glutPostRedisplay();
 
 }
