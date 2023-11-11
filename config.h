@@ -27,6 +27,8 @@
 
     #define PARTICLE_SIZE           5
 
+    #define VERBOSE_LEVEL           0
+    
     // #if ARENA_X % PARTICLE_SIZE != 0 || ARENA_Y % PARTICLE_SIZE != 0 
     //     #error PARTICLE SIZE IS NOT DIVISABLE PROPERLY
     // #endif

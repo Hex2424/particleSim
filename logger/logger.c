@@ -14,7 +14,7 @@
 
 #include "logger.h"
 #include "colors.h"
-
+#include "../config.h"
 ////////////////////////////////
 // DEFINES
 
