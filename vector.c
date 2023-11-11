@@ -15,6 +15,6 @@
 
 void Vector_calcResultant(const VectorHandle_t const vectorA, const VectorHandle_t const vectorB, VectorHandle_t const result)
 {
-    result->x = vectorB->x + vectorA->x;
-    result->y = vectorB->y + vectorA->y;
+    result->a = vectorB->a + vectorA->a;
+    result->b = vectorB->b + vectorA->b;
 }
