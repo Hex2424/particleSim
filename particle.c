@@ -16,24 +16,15 @@
 #include "logger/logger.h"
 #include "config.h"
 
-static ParticlesCloud_t particleCloud; 
+static ParticlesCloud_t particleCloud;
 
 static const char* TAG = "PARTICLE_CLOUD";
 
 
-bool ParticleCloud_init(const uint16_t maxGroupsInCloud)
+void ParticleCloud_init(void)
 {   
-    particleCloud.cloudSize = maxGroupsInCloud;
-    particleCloud.currentIdx = 0;
-    particleCloud.groups = malloc(sizeof(ParticlesGroup_t) * maxGroupsInCloud);
-
-    if(particleCloud.groups == NULL)
-    {
-        Log_e(TAG, "particleCloud allocation failed of size: %u", maxGroupsInCloud);
-        return false;
-    }
-
-    return true;
+    particleCloud.particleStackTop = particleCloud.particleStack;
+    particleCloud.groupStackTop = particleCloud.groupStack;
 }
 
 
@@ -41,47 +32,49 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t colo
 {
     ParticlesGroupHandle_t currentGroupHandle;
 
-    if(particleCloud.currentIdx >= particleCloud.cloudSize)
+    if(particleCloud.groupStackTop >= (particleCloud.groupStack + MAX_ALLOWED_GROUPS))
     {
-        Log_e(TAG, "Cannot add new group to cloud, please increase cloud size, currently:%u", particleCloud.cloudSize);
+        Log_e(TAG, "MAX_ALLOWED_GROUPS : %u EXCEEDED!", MAX_ALLOWED_GROUPS);
         return false;
     }
-
-    currentGroupHandle = particleCloud.groups + particleCloud.currentIdx;
+    
+    currentGroupHandle = particleCloud.groupStackTop;
 
     currentGroupHandle->color = color;
-    currentGroupHandle->groupSize = particlesCount;
+    currentGroupHandle->firstParticle = particleCloud.particleStackTop;
+    currentGroupHandle->lastParticle = currentGroupHandle->firstParticle + particlesCount;
     currentGroupHandle->physics = physics;
-    currentGroupHandle->particles = malloc(sizeof(Particle_t) * particlesCount);
-
-    if(currentGroupHandle->particles == NULL)
+    
+    if(currentGroupHandle->lastParticle >= (particleCloud.particleStack + MAX_ALLOWED_PARTICLES))
     {
-        Log_e(TAG, "Cannot allocate group: %u with %u particles", particleCloud.currentIdx, particlesCount);
+        Log_e(TAG, "MAX_ALLOWED_PARTICLES : %u EXCEEDED!", MAX_ALLOWED_PARTICLES);
         return false;
     }
 
-    for(ParticleHandle_t currentParticle = currentGroupHandle->particles;
-        currentParticle < currentGroupHandle->particles + particlesCount;
-        currentParticle++)
+    for( ; particleCloud.particleStackTop < currentGroupHandle->lastParticle; particleCloud.particleStackTop++)
     {
-        currentParticle->newState.x = (rand() % WINDOW_W) / (WINDOW_W / 2.0f) - 1;
-        currentParticle->newState.y = (rand() % WINDOW_H) / (WINDOW_H / 2.0f) - 1;
+        ParticleHandle_t particle;
+        particle = particleCloud.particleStackTop;
 
-        currentParticle->originalState = currentParticle->newState;
+        particle->newState.x = (rand() % ARENA_W + 1) + 1;
+        particle->newState.y = (rand() % ARENA_H + 1) + 1;
+
+        particle->originalState = particle->newState;
     }
-      
 
-    particleCloud.currentIdx++;
-
+   
+    particleCloud.groupStackTop++;
+    
     return true;
 }
 
-ParticlesGroupHandle_t ParticleCloud_groupAt(const uint16_t groupIdx)
+ParticlesGroupHandle_t ParticleCloud_groupFirst(void)
 {
-    return particleCloud.groups + groupIdx;
+    return particleCloud.groupStack;
 }
 
-uint16_t ParticleCloud_getGroupsCount(void)
+ParticlesGroupHandle_t ParticleCloud_groupLast(void)
 {
-    return particleCloud.currentIdx;
+    return particleCloud.groupStackTop;
 }
+

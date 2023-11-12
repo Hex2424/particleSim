@@ -26,6 +26,9 @@ void Display_init(int argc, char **argv)
     glutInitWindowPosition(WINDOW_POSX, WINDOW_POSY);                // window position
     glutInitWindowSize(WINDOW_W, WINDOW_H);           // window size 
     glutCreateWindow(WINDOW_NAME);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, 500, 0, 500);
     glClearColor(0.0, 0.0, 0.0, 0.0);                 // black background
 }
 
@@ -44,7 +47,7 @@ static void renderScene_(void)
 
     glClear( GL_COLOR_BUFFER_BIT);
 
-    for(ParticlesGroupHandle_t group = ParticleCloud_groupAt(0); group < ParticleCloud_groupAt(ParticleCloud_getGroupsCount()); group++)
+    for(ParticlesGroupHandle_t group = ParticleCloud_groupFirst(); group < ParticleCloud_groupLast(); group++)
     {
         glColor3f(RGB_R(group->color), RGB_G(group->color), RGB_B(group->color));
 
@@ -56,7 +59,7 @@ static void renderScene_(void)
         glPointSize(PARTICLE_SIZE);
         glBegin(GL_POINTS);
 
-        for(ParticleHandle_t prt = group->particles; prt < group->particles + group->groupSize; prt++)
+        for(ParticleHandle_t prt = group->firstParticle; prt < group->lastParticle; prt++)
         {
             glVertex3f(prt->originalState.x, prt->originalState.y, 0.0);
         }

@@ -17,9 +17,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "physics.h"
+#include "config.h"
 
 typedef float coord_t;
-typedef uint32_t color_t;
+typedef float color_t;
 
 typedef struct
 {
@@ -41,8 +42,8 @@ typedef Particle_t* ParticleHandle_t;
 // Particle group is set of particles which shares same fate
 typedef struct
 {
-    ParticleHandle_t particles;
-    uint16_t groupSize;
+    ParticleHandle_t firstParticle;
+    ParticleHandle_t lastParticle;
     color_t color;
     PhysicalProperties_t physics;
 }ParticlesGroup_t;
@@ -52,16 +53,18 @@ typedef ParticlesGroup_t* ParticlesGroupHandle_t;
 // Particle cloud is set of Particle groups and overall physic
 typedef struct
 {
-    ParticlesGroupHandle_t groups;
+    Particle_t particleStack[MAX_ALLOWED_PARTICLES];
+    ParticlesGroup_t groupStack[MAX_ALLOWED_GROUPS];
 
-    uint16_t cloudSize;
-    uint16_t currentIdx;
+    ParticleHandle_t particleStackTop;
+    ParticlesGroupHandle_t groupStackTop;
+
 }ParticlesCloud_t;
 
 typedef ParticlesCloud_t* ParticlesCloudHandle_t;
 
-bool ParticleCloud_init(const uint16_t maxGroupsInCloud);
+void ParticleCloud_init(void);
 bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t color, const PhysicalProperties_t physics);
-ParticlesGroupHandle_t ParticleCloud_groupAt(const uint16_t groupIdx);
-uint16_t ParticleCloud_getGroupsCount(void);
+ParticlesGroupHandle_t ParticleCloud_groupLast(void);
+ParticlesGroupHandle_t ParticleCloud_groupFirst(void);
 #endif // PARTICLE_H_

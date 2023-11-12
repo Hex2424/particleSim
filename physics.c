@@ -15,9 +15,10 @@
 #include "particle.h"
 #include <math.h>
 #include "logger/logger.h"
+#include "config.h"
 
 // Physical constants
-#define GRAVITY_INCREASE            100000
+#define GRAVITY_INCREASE            1000000
 
 const float GRAVITY_CONST = 6.6743E-11 * GRAVITY_INCREASE;
 
@@ -43,14 +44,14 @@ void Physics_updatePhysics(float deltaTime)
 {
     //TODO add delta time in future
 
-    for(ParticlesGroupHandle_t groupA = ParticleCloud_groupAt(0); groupA < ParticleCloud_groupAt(ParticleCloud_getGroupsCount()); groupA++)
+    for(ParticlesGroupHandle_t groupA = ParticleCloud_groupFirst(); groupA < ParticleCloud_groupLast(); groupA++)
     {
-        for(ParticleHandle_t prtA = groupA->particles; prtA < groupA->particles + groupA->groupSize; prtA++)
+        for(ParticleHandle_t prtA = groupA->firstParticle; prtA < groupA->lastParticle; prtA++)
         {
             Log_d(TAG, "Start particle Effect %p", prtA);
-            for(ParticlesGroupHandle_t groupB = ParticleCloud_groupAt(0); groupB < ParticleCloud_groupAt(ParticleCloud_getGroupsCount()); groupB++)
+            for(ParticlesGroupHandle_t groupB = ParticleCloud_groupFirst(); groupB < ParticleCloud_groupLast(); groupB++)
             {
-                for(ParticleHandle_t prtB = groupB->particles; prtB < groupB->particles + groupB->groupSize; prtB++)
+                for(ParticleHandle_t prtB = groupB->firstParticle; prtB < groupB->lastParticle; prtB++)
                 {
                     if(prtA != prtB)
                     {
@@ -94,31 +95,31 @@ inline static void particleReaction_(ParticleHandle_t particleA,
     particleA->newState.x += particleA->newState.velocity.a * deltaTime; // TODO add delta t as time unit not 1
     particleA->newState.y += particleA->newState.velocity.b * deltaTime;
 
-    if(particleA->newState.x < -1)
+    if(particleA->newState.x < ARENA_LEFT_POS)
     {
         // X cord smashed to wall :DD
-        particleA->newState.x = -1;
+        particleA->newState.x = ARENA_LEFT_POS;
         particleA->newState.velocity.a = 0;
     }
 
-    if(particleA->newState.x > 1)
+    if(particleA->newState.x > ARENA_RIGHT_POS)
     {
         // X cord smashed to wall :DD
-        particleA->newState.x = 1;
+        particleA->newState.x = ARENA_RIGHT_POS;
         particleA->newState.velocity.a = 0;
     }
 
-    if(particleA->newState.y < -1)
+    if(particleA->newState.y < ARENA_BOTTOM_POS)
     {
         // Y cord smashed to RIGHT wall :DD
-        particleA->newState.y = -1;
+        particleA->newState.y = ARENA_LEFT_POS;
         particleA->newState.velocity.b = 0;
     }
 
-    if(particleA->newState.y > 1)
+    if(particleA->newState.y > ARENA_TOP_POS)
     {
         // Y cord smashed to LEFT wall :DD
-        particleA->newState.y = 1;
+        particleA->newState.y = ARENA_RIGHT_POS;
         particleA->newState.velocity.b = 0;
     }
 
@@ -126,7 +127,7 @@ inline static void particleReaction_(ParticleHandle_t particleA,
 
 
 
-    Log_d(TAG, "M1:%f, M2:%f, F:%f, acc:%f, vx:%f, vy:%f, x:%f, y:%f, diffx:%f, diffy:%f", 
+    Log_d(TAG, "M1:%u, M2:%u, F:%f, acc:%f, vx:%u, vy:%u, x:%u, y:%u, diffx:%f, diffy:%f", 
         particleAProp->mass, particleBProp->mass,
         F,
         acceleration,

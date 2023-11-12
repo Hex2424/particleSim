@@ -17,15 +17,13 @@ int main(int argc, char **argv)
     Display_init(argc, argv);
 
     // Prepare particles cloud
-    ParticleCloud_init(5);
-    ParticleCloud_addNewGroup(10, RED, Physics_physic(GRAVITY_FORCE, 1000));
-    ParticleCloud_addNewGroup(1, GREEN, Physics_physic(GRAVITY_FORCE, -100000));
-    ParticleCloud_addNewGroup(1, BLUE, Physics_physic(GRAVITY_FORCE, 100000));
+    ParticleCloud_init();
+    ParticleCloud_addNewGroup(10, RED, Physics_physic(GRAVITY_FORCE, 100000));
+    ParticleCloud_addNewGroup(1, GREEN, Physics_physic(GRAVITY_FORCE, 100000));
+    // ParticleCloud_addNewGroup(1, BLUE, Physics_physic(GRAVITY_FORCE, 1));
     // ParticleCloud_addNewGroup(20, RGB(255, 0, 0), Physics_physic(GRAVITY_FORCE, 100000));
    
     Display_startRendering(jobFunction_);
 
     return 0;
 }
-
-

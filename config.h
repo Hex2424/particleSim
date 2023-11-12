@@ -21,14 +21,22 @@
     #define WINDOW_W                500
     #define WINDOW_H                500
 
-    // CALCULATING MOST OPTIMAL 
-    // #define ARENA_X                 WINDOW_W * PARTICLE_SIZE
-    // #define ARENA_Y                 WINDOW_H * PARTICLE_SIZE
+
+    #define ARENA_LEFT_POS          0
+    #define ARENA_RIGHT_POS         WINDOW_W
+    #define ARENA_BOTTOM_POS        0
+    #define ARENA_TOP_POS           WINDOW_H
+
+    #define ARENA_W                 (ARENA_RIGHT_POS - ARENA_LEFT_POS)
+    #define ARENA_H                 (ARENA_TOP_POS - ARENA_BOTTOM_POS)
 
     #define PARTICLE_SIZE           5
 
-    #define VERBOSE_LEVEL           0
+    #define VERBOSE_LEVEL           3
     
+    #define MAX_ALLOWED_PARTICLES   1000
+    #define MAX_ALLOWED_GROUPS      5
+
     // #if ARENA_X % PARTICLE_SIZE != 0 || ARENA_Y % PARTICLE_SIZE != 0 
     //     #error PARTICLE SIZE IS NOT DIVISABLE PROPERLY
     // #endif
