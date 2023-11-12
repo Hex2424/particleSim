@@ -13,8 +13,8 @@
 #include "vector.h"
 
 
-void Vector_calcResultant(const VectorHandle_t const vectorA, const VectorHandle_t const vectorB, VectorHandle_t const result)
-{
-    result->a = vectorB->a + vectorA->a;
-    result->b = vectorB->b + vectorA->b;
-}
+// void Vector_calcResultant(const VectorHandle_t const vectorA, const VectorHandle_t const vectorB, VectorHandle_t const result)
+// {
+//     result->a = vectorB->a + vectorA->a;
+//     result->b = vectorB->b + vectorA->b;
+// }

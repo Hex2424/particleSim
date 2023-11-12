@@ -17,16 +17,30 @@
 
 #include <stdint.h>
 
+
+
 typedef struct
 {
-    float a;
-    float b;
-}Vector_t;
+    float ax;
+    float ay;
+}AccelerationVector_t;
 
-typedef Vector_t* VectorHandle_t;
+typedef struct
+{
+    float vx;
+    float vy;
+}VelocityVector_t;
+
+typedef struct
+{
+    float x;
+    float y;
+}CoordDirectionVector_t;
+
+// typedef Vector_t* VectorHandle_t;
 
 
-void Vector_calcResultant(const VectorHandle_t const vectorA, const VectorHandle_t const vectorB, VectorHandle_t const result);
+// void Vector_calcResultant(const VectorHandle_t const vectorA, const VectorHandle_t const vectorB, VectorHandle_t const result);
 
 
 #endif // VECTOR_H_

@@ -58,6 +58,9 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t colo
 
         particle->newState.x = (rand() % ARENA_W + 1) + 1;
         particle->newState.y = (rand() % ARENA_H + 1) + 1;
+        
+        particle->newState.velocity.vx = 0;
+        particle->newState.velocity.vy = 0;
 
         particle->originalState = particle->newState;
     }

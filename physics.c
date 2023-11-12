@@ -74,53 +74,53 @@ inline static void particleReaction_(ParticleHandle_t particleA,
     float deltaTime)
 {
     // TODO add delta time in future
-    Vector_t directionVector;
-    Vector_t accelerationVector;
+    CoordDirectionVector_t directionVector;
+    AccelerationVector_t accelerationVector;
     Log_d(TAG, "delta time:%f", deltaTime);
 
-    directionVector.a = particleB->originalState.x - particleA->originalState.x;
-    directionVector.b = particleB->originalState.y - particleA->originalState.y;
-
-    float r = sqrt(directionVector.a * directionVector.a + directionVector.b * directionVector.b);
+    directionVector.x = particleB->originalState.x - particleA->originalState.x;
+    directionVector.y = particleB->originalState.y - particleA->originalState.y;
+    
+    float r = sqrt(directionVector.x * directionVector.x + directionVector.y * directionVector.y);
     float F = (GRAVITY_CONST * particleAProp->mass * particleBProp->mass) / r*r;
     
     float acceleration = F / particleAProp->mass; 
 
-    accelerationVector.a = directionVector.a / r * acceleration;
-    accelerationVector.b = directionVector.b / r * acceleration;
+    accelerationVector.ax = directionVector.x / r * acceleration;
+    accelerationVector.ay = directionVector.y / r * acceleration;
 
-    particleA->newState.velocity.a += accelerationVector.a * deltaTime; // TODO add delta t as time unit not 1
-    particleA->newState.velocity.b += accelerationVector.b * deltaTime;
+    particleA->newState.velocity.vx += accelerationVector.ax * deltaTime; // TODO add delta t as time unit not 1
+    particleA->newState.velocity.vy += accelerationVector.ay * deltaTime;
 
-    particleA->newState.x += particleA->newState.velocity.a * deltaTime; // TODO add delta t as time unit not 1
-    particleA->newState.y += particleA->newState.velocity.b * deltaTime;
+    particleA->newState.x += particleA->newState.velocity.vx * deltaTime; // TODO add delta t as time unit not 1
+    particleA->newState.y += particleA->newState.velocity.vy * deltaTime;
 
     if(particleA->newState.x < ARENA_LEFT_POS)
     {
         // X cord smashed to wall :DD
         particleA->newState.x = ARENA_LEFT_POS;
-        particleA->newState.velocity.a = 0;
+        particleA->newState.velocity.vx = 0;
     }
 
     if(particleA->newState.x > ARENA_RIGHT_POS)
     {
         // X cord smashed to wall :DD
         particleA->newState.x = ARENA_RIGHT_POS;
-        particleA->newState.velocity.a = 0;
+        particleA->newState.velocity.vx = 0;
     }
 
     if(particleA->newState.y < ARENA_BOTTOM_POS)
     {
         // Y cord smashed to RIGHT wall :DD
         particleA->newState.y = ARENA_LEFT_POS;
-        particleA->newState.velocity.b = 0;
+        particleA->newState.velocity.vy = 0;
     }
 
     if(particleA->newState.y > ARENA_TOP_POS)
     {
         // Y cord smashed to LEFT wall :DD
         particleA->newState.y = ARENA_RIGHT_POS;
-        particleA->newState.velocity.b = 0;
+        particleA->newState.velocity.vy = 0;
     }
 
     if(particleA->newState.x)
@@ -131,10 +131,10 @@ inline static void particleReaction_(ParticleHandle_t particleA,
         particleAProp->mass, particleBProp->mass,
         F,
         acceleration,
-        accelerationVector.a, accelerationVector.b,
-        particleA->newState.velocity.a, particleA->newState.velocity.b,
+        accelerationVector.ax, accelerationVector.ay,
+        particleA->newState.velocity.vx, particleA->newState.velocity.vy,
         particleA->newState.x, particleA->newState.y,
-        directionVector.a, directionVector.b);
+        directionVector.x, directionVector.y);
     
 
 }

@@ -26,7 +26,7 @@ typedef struct
 {
     coord_t x;
     coord_t y;
-    Vector_t velocity;
+    VelocityVector_t velocity;
 }ParticleState_t;
 
 // Particle as element created here
