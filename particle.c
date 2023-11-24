@@ -15,22 +15,30 @@
 #include "stdlib.h"
 #include "logger/logger.h"
 #include "config.h"
+#include <string.h>
 
-static ParticlesCloud_t particleCloud;
+ParticlesCloud_t particleCloud;
 
 static const char* TAG = "PARTICLE_CLOUD";
 
 
 void ParticleCloud_init(void)
 {   
-    particleCloud.particleStackTop = particleCloud.particleStack;
+    // Setting default values as zero
+    memset(particleCloud.coordsVectors, 0, MAX_ALLOWED_PARTICLES * sizeof(Coords_t));
+    memset(particleCloud.velocityVectors, 0, MAX_ALLOWED_PARTICLES * sizeof(VelocityVector_t));
+    memset(particleCloud.accelerationVectors, 0, MAX_ALLOWED_PARTICLES * sizeof(AccelerationVector_t));
+
     particleCloud.groupStackTop = particleCloud.groupStack;
+    particleCloud.particleCurrPosCounter = 0;
 }
 
 
-bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t color, const PhysicalProperties_t physics)
+bool ParticleCloud_addNewGroup(const uint16_t particlesCount,
+    const color_t colorId,
+    const PhysicalProperties_t physics)
 {
-    ParticlesGroupHandle_t currentGroupHandle;
+    ParticlesGroupHandle_t currGroupHandle;
 
     if(particleCloud.groupStackTop >= (particleCloud.groupStack + MAX_ALLOWED_GROUPS))
     {
@@ -38,35 +46,32 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t colo
         return false;
     }
     
-    currentGroupHandle = particleCloud.groupStackTop;
-
-    currentGroupHandle->color = color;
-    currentGroupHandle->firstParticle = particleCloud.particleStackTop;
-    currentGroupHandle->lastParticle = currentGroupHandle->firstParticle + particlesCount;
-    currentGroupHandle->physics = physics;
+    currGroupHandle = particleCloud.groupStackTop;
     
-    if(currentGroupHandle->lastParticle >= (particleCloud.particleStack + MAX_ALLOWED_PARTICLES))
+    currGroupHandle->colorId = colorId;
+    currGroupHandle->particlesBeginPos = particleCloud.particleCurrPosCounter;
+    currGroupHandle->particlesEndPos= particleCloud.particleCurrPosCounter + particlesCount;
+    currGroupHandle->physics = physics;
+    
+    
+    if((particleCloud.particleCurrPosCounter +  particlesCount) >= MAX_ALLOWED_PARTICLES)
     {
         Log_e(TAG, "MAX_ALLOWED_PARTICLES : %u EXCEEDED!", MAX_ALLOWED_PARTICLES);
         return false;
     }
 
-    for( ; particleCloud.particleStackTop < currentGroupHandle->lastParticle; particleCloud.particleStackTop++)
+    for(uint32_t particleIdx = currGroupHandle->particlesBeginPos; particleIdx < currGroupHandle->particlesEndPos; particleIdx++)
     {
-        ParticleHandle_t particle;
-        particle = particleCloud.particleStackTop;
+        Coords_t* currParticleCoords;
+        currParticleCoords = &particleCloud.coordsVectors[particleIdx]; 
 
-        particle->newState.x = (rand() % ARENA_W + 1) + 1;
-        particle->newState.y = (rand() % ARENA_H + 1) + 1;
-        
-        particle->newState.velocity.vx = 0;
-        particle->newState.velocity.vy = 0;
 
-        particle->originalState = particle->newState;
+        currParticleCoords->x = (rand() % ARENA_W + 1) + 1;
+        currParticleCoords->y = (rand() % ARENA_H + 1) + 1;    
     }
 
-   
     particleCloud.groupStackTop++;
+    particleCloud.particleCurrPosCounter += particlesCount;
     
     return true;
 }
@@ -80,4 +85,3 @@ ParticlesGroupHandle_t ParticleCloud_groupLast(void)
 {
     return particleCloud.groupStackTop;
 }
-

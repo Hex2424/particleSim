@@ -31,11 +31,11 @@
     #define ARENA_H                 (ARENA_TOP_POS - ARENA_BOTTOM_POS)
 
     #define PARTICLE_SIZE           5
-
-    #define VERBOSE_LEVEL           3
     
-    #define MAX_ALLOWED_PARTICLES   1000
+    #define MAX_ALLOWED_PARTICLES   2000
     #define MAX_ALLOWED_GROUPS      5
+
+    #define MAX_FPS_ALLOWED         60
 
     // #if ARENA_X % PARTICLE_SIZE != 0 || ARENA_Y % PARTICLE_SIZE != 0 
     //     #error PARTICLE SIZE IS NOT DIVISABLE PROPERLY

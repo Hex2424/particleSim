@@ -33,5 +33,5 @@ typedef struct
 
 
 PhysicalProperties_t Physics_physic(const EnabledPhysics_t affectingPhysics, const Mass_t mass);
-void Physics_updatePhysics(float deltaTime);
+void Physics_updatePhysics(const float deltaTime);
 #endif // PHYSICS_H_

@@ -19,32 +19,22 @@
 #include "physics.h"
 #include "config.h"
 
-typedef float coord_t;
+typedef struct
+{
+    float x;
+    float y;
+}Coords_t;
+
 typedef float color_t;
 
-typedef struct
-{
-    coord_t x;
-    coord_t y;
-    VelocityVector_t velocity;
-}ParticleState_t;
-
-// Particle as element created here
-typedef struct
-{
-    // To prevent calculations after state change
-    ParticleState_t originalState;
-    ParticleState_t newState;
-}Particle_t;
-
-typedef Particle_t* ParticleHandle_t;
+// #define BITS_UINT32 (sizeof(uint32_t) * __CHAR_BIT__)
 
 // Particle group is set of particles which shares same fate
 typedef struct
 {
-    ParticleHandle_t firstParticle;
-    ParticleHandle_t lastParticle;
-    color_t color;
+    uint32_t particlesBeginPos;
+    uint32_t particlesEndPos;
+    color_t colorId;
     PhysicalProperties_t physics;
 }ParticlesGroup_t;
 
@@ -53,15 +43,19 @@ typedef ParticlesGroup_t* ParticlesGroupHandle_t;
 // Particle cloud is set of Particle groups and overall physic
 typedef struct
 {
-    Particle_t particleStack[MAX_ALLOWED_PARTICLES];
     ParticlesGroup_t groupStack[MAX_ALLOWED_GROUPS];
-
-    ParticleHandle_t particleStackTop;
     ParticlesGroupHandle_t groupStackTop;
+
+    uint32_t particleCurrPosCounter;
+    AccelerationVector_t accelerationVectors[MAX_ALLOWED_PARTICLES];  // like a acceleration matrix
+    VelocityVector_t velocityVectors[MAX_ALLOWED_PARTICLES];          // like a velocity matrix
+    Coords_t coordsVectors[MAX_ALLOWED_PARTICLES];                    // like a x, y position matrix
 
 }ParticlesCloud_t;
 
 typedef ParticlesCloud_t* ParticlesCloudHandle_t;
+extern ParticlesCloud_t particleCloud;
+
 
 void ParticleCloud_init(void);
 bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t color, const PhysicalProperties_t physics);

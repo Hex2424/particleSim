@@ -18,8 +18,16 @@ int main(int argc, char **argv)
 
     // Prepare particles cloud
     ParticleCloud_init();
-    ParticleCloud_addNewGroup(10, RED, Physics_physic(GRAVITY_FORCE, 100000));
-    ParticleCloud_addNewGroup(1, GREEN, Physics_physic(GRAVITY_FORCE, 100000));
+    ParticleCloud_addNewGroup(3, WHITE, Physics_physic(GRAVITY_FORCE, 100000));
+
+    ParticleCloud_addNewGroup(1, RED, Physics_physic(GRAVITY_FORCE, 1));
+    // ParticleCloud_addNewGroup(100, GREEN, Physics_physic(GRAVITY_FORCE, 1000));
+    // ParticleCloud_addNewGroup(10, ORANGE, Physics_physic(GRAVITY_FORCE, 10000));
+
+    // Simulate(WHITE, RED, GRAVITY_FORCE);
+    // Simulate(WHITE, RED, GRAVITY_ATTRACTION);
+
+    // ParticleCloud_addNewGroup(10, BLUE, Physics_physic(GRAVITY_FORCE, 100));
     // ParticleCloud_addNewGroup(1, BLUE, Physics_physic(GRAVITY_FORCE, 1));
     // ParticleCloud_addNewGroup(20, RGB(255, 0, 0), Physics_physic(GRAVITY_FORCE, 100000));
    

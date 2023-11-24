@@ -14,6 +14,14 @@
 #include "display.h"
 #include "config.h"
 
+#if LINUX
+    #include <unistd.h>
+#elif WINDOWS
+    #error SLEEP NOT SUPPORTED IN WINDOWS YET
+#else
+    #error OS NOT DEFINED 
+#endif
+
 static void renderScene_(void);
 
 static void (* job)( float deltaTime );
@@ -42,6 +50,7 @@ void Display_startRendering(void (* jobCallback)( float deltaTime ) )
 static void renderScene_(void)
 {
     static float delaySeconds = 0;
+    static float delaySleep = 0;
     static int oldTimestamp = 0;
     static int currentTimestamp = 0;
 
@@ -49,8 +58,8 @@ static void renderScene_(void)
 
     for(ParticlesGroupHandle_t group = ParticleCloud_groupFirst(); group < ParticleCloud_groupLast(); group++)
     {
-        glColor3f(RGB_R(group->color), RGB_G(group->color), RGB_B(group->color));
-
+        // TODO optimize on bytes
+        glColor3f(RGB_R(group->colorId), RGB_G(group->colorId), RGB_B(group->colorId));
         // int x = glutGet(GLUT_WINDOW_WIDTH);
         // // int y = glutGet(GLUT_WINDOW_HEIGHT);
 
@@ -59,9 +68,9 @@ static void renderScene_(void)
         glPointSize(PARTICLE_SIZE);
         glBegin(GL_POINTS);
 
-        for(ParticleHandle_t prt = group->firstParticle; prt < group->lastParticle; prt++)
+        for(size_t particleIdx = group->particlesBeginPos; particleIdx < group->particlesEndPos; particleIdx++)
         {
-            glVertex3f(prt->originalState.x, prt->originalState.y, 0.0);
+            glVertex2s((short) particleCloud.coordsVectors[particleIdx].x, (short) particleCloud.coordsVectors[particleIdx].y);
         }
 
         glEnd();
@@ -72,12 +81,23 @@ static void renderScene_(void)
 
     // calling job function
     job(delaySeconds);
-
+    
     currentTimestamp = glutGet(GLUT_ELAPSED_TIME);
     delaySeconds = (currentTimestamp - oldTimestamp) / 1000.0f;
+    delaySleep = (1.0f / MAX_FPS_ALLOWED) - delaySeconds;
+
+    if(delaySleep > 0)
+    {
+        #if LINUX
+            usleep(delaySleep * 1000000);
+            delaySeconds += delaySleep;
+            
+        #elif WINDOWS
+            // TODO implement in future
+        #endif
+    }
+    
     oldTimestamp = currentTimestamp;
-
-
     glutPostRedisplay();
 
 }
