@@ -34,7 +34,7 @@ void ParticleCloud_init(void)
 }
 
 
-bool ParticleCloud_addNewGroup(const uint16_t particlesCount,
+void ParticleCloud_addNewGroup(const uint16_t particlesCount,
     const color_t colorId,
     const PhysicalProperties_t physics)
 {
@@ -43,7 +43,7 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount,
     if(particleCloud.groupStackTop >= (particleCloud.groupStack + MAX_ALLOWED_GROUPS))
     {
         Log_e(TAG, "MAX_ALLOWED_GROUPS : %u EXCEEDED!", MAX_ALLOWED_GROUPS);
-        return false;
+        exit(-1);
     }
     
     currGroupHandle = particleCloud.groupStackTop;
@@ -57,7 +57,7 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount,
     if((particleCloud.particleCurrPosCounter +  particlesCount) >= MAX_ALLOWED_PARTICLES)
     {
         Log_e(TAG, "MAX_ALLOWED_PARTICLES : %u EXCEEDED!", MAX_ALLOWED_PARTICLES);
-        return false;
+        exit(-1);
     }
 
     for(uint32_t particleIdx = currGroupHandle->particlesBeginPos; particleIdx < currGroupHandle->particlesEndPos; particleIdx++)
@@ -72,8 +72,6 @@ bool ParticleCloud_addNewGroup(const uint16_t particlesCount,
 
     particleCloud.groupStackTop++;
     particleCloud.particleCurrPosCounter += particlesCount;
-    
-    return true;
 }
 
 ParticlesGroupHandle_t ParticleCloud_groupFirst(void)

@@ -58,7 +58,7 @@ extern ParticlesCloud_t particleCloud;
 
 
 void ParticleCloud_init(void);
-bool ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t color, const PhysicalProperties_t physics);
+void ParticleCloud_addNewGroup(const uint16_t particlesCount, const color_t color, const PhysicalProperties_t physics);
 ParticlesGroupHandle_t ParticleCloud_groupLast(void);
 ParticlesGroupHandle_t ParticleCloud_groupFirst(void);
 #endif // PARTICLE_H_
