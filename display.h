@@ -30,6 +30,7 @@
 #define GOLD                    (RGB(255, 215, 0))
 #define ORANGE                  (RGB(255, 165,0))
 #define PURPLE                  (RGB(138,43,226))
+#define WHITE                   (RGB(255,255,255))
 
 void Display_init(int argc, char **argv);
 void Display_startRendering(void (* renderCallback)( float deltaTime ) );
