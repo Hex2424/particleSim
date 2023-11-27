@@ -55,7 +55,7 @@ static void renderScene_(void)
 
     glClear( GL_COLOR_BUFFER_BIT);
 
-    for(ParticlesGroupHandle_t group = ParticleCloud_groupFirst(); group < ParticleCloud_groupLast(); group++)
+    for(ParticlesGroupHandle_t group = particleCloud.groupStack; group < particleCloud.groupStackTop; group++)
     {
         // TODO optimize on bytes
         glColor3ub(RGB_R(group->colorId), RGB_G(group->colorId), RGB_B(group->colorId));

@@ -82,7 +82,7 @@ void inline Log_e(const char* TAG, const char* expression, ...)
  */
 void inline Log_i(const char* TAG, const char* expression, ...)
 {
-    #if VERBOSE_LEVEL > 2
+    #if VERBOSE_LEVEL > 1
         COLOR_PRINT_MACRO(LIGHT_BLUE);
     #endif
 }

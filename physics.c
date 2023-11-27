@@ -16,12 +16,14 @@
 #include <math.h>
 #include "logger/logger.h"
 #include "config.h"
+#include <time.h>
+#include <string.h>
 
 // Physical constants
-#define GRAVITY_INCREASE            1000000
+#define GRAVITY_INCREASE            1E5
 
 const float GRAVITY_CONST = 6.6743E-11 * GRAVITY_INCREASE;
-
+// const float GRAVITY_CONST = 1;
 
 static const char* TAG = "PHYSICS";
 
@@ -40,9 +42,18 @@ PhysicalProperties_t Physics_physic(const EnabledPhysics_t affectingPhysics, con
 
 void Physics_updatePhysics(const float deltaTime)
 {
+
+    clock_t start, end;
+    unsigned long cpu_time_used;
+    
+    // Acceleration matrix must be resetted each time since its not assign happening but accelerations sum
+    memset(particleCloud.accelerationVectors, 0, particleCloud.particleCurrPosCounter * sizeof(AccelerationVector_t));
+    // start = clock();
     // Calculating new accelerations
     updateAccelerationVectors_();
-
+    // end = clock();
+    // cpu_time_used = ((end - start));
+    // printf("clock: %lo\n", cpu_time_used);
     // Calculating new Velocities
     updateVelocityVectors_(deltaTime);
 
@@ -88,9 +99,9 @@ inline static void updateAccelerationVectors_(void)
                 
                 float r = sqrt(directionVectorA.x * directionVectorA.x + directionVectorA.y * directionVectorA.y);
                 
-                if(r == 0.0f)
+                if(r == 0)
                 {
-                    r = 0.001;
+                    r = 0.1f;
                 }
 
 
@@ -98,17 +109,19 @@ inline static void updateAccelerationVectors_(void)
             
                 float accelerationA = F / massA;
                 float accelerationB = F / massB; 
-
+            
                 // TODO later on we need sum acceleration vectors from differend physics
                 // Updating both particles accelerations
-                particleCloud.accelerationVectors[prtIdxA].ax = (directionVectorA.x / r) * accelerationA;
-                particleCloud.accelerationVectors[prtIdxA].ay = (directionVectorA.y / r) * accelerationA;
+                particleCloud.accelerationVectors[prtIdxA].ax += (directionVectorA.x / r) * accelerationA;
+                particleCloud.accelerationVectors[prtIdxA].ay += (directionVectorA.y / r) * accelerationA;
 
-                particleCloud.accelerationVectors[prtIdxB].ax = (-directionVectorA.x / r) * accelerationB;
-                particleCloud.accelerationVectors[prtIdxB].ay = (-directionVectorA.y / r) * accelerationB;
-
+                particleCloud.accelerationVectors[prtIdxB].ax += (-directionVectorA.x / r) * accelerationB;
+                particleCloud.accelerationVectors[prtIdxB].ay += (-directionVectorA.y / r) * accelerationB;
+                
+                Log_d(TAG, "M1:%f, M2:%f, F:%f, accA:%f, accB:%f", 
+                    massA, massB,F,accelerationA, accelerationB);
             }
-        }
+        } 
     }
 }
 
