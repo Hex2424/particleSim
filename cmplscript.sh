@@ -13,14 +13,26 @@ else
         logger/logger.c \
         display.c \
         vector.c -lGL -lGLU -lglut -lm -o prtLife.out"
-
+    
     if [ "$1" == "release" ]; then
-        $compile -O3 -DLINUX -DVERBOSE_LEVEL=1
+        compile2="$compile -O3 -DLINUX -DVERBOSE_LEVEL=1"
     elif [ "$1" == "debug" ]; then
-        $compile -O0 -DLINUX -DVERBOSE_LEVEL=3
-    else 
-        $compile -O0 -DLINUX -DVERBOSE_LEVEL=2
+        compile2="$compile -O0 -DLINUX -DVERBOSE_LEVEL=3"
+    else
+        compile2="$compile -O0 -DLINUX -DVERBOSE_LEVEL=2"
     fi
-    # Execute program
-    ./prtLife.out
+
+    if [ "$2" == "profile" ]; then
+        $compile2 -DENABLED_PROFILE -g -pg
+    else
+        $compile2
+    fi
+
+    if [ "$2" == "profile" ]; then
+        gprof -l ./prtLife.out gmon.out > analysis.txt
+    else
+        # Execute program
+        ./prtLife.out
+    fi
+
 fi
