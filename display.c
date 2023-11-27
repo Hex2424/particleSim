@@ -30,7 +30,6 @@ void Display_init(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode ( GLUT_SINGLE | GLUT_RGB);    // 1 buffer | enable colors
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     glutInitWindowPosition(WINDOW_POSX, WINDOW_POSY);                // window position
     glutInitWindowSize(WINDOW_W, WINDOW_H);           // window size 
     glutCreateWindow(WINDOW_NAME);
