@@ -98,6 +98,9 @@ static void renderScene_(void)
     }
     
     oldTimestamp = currentTimestamp;
+    #if ENABLED_PROFILE
+        exit(0);
+    #endif
     glutPostRedisplay();
 
 }
