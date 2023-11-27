@@ -17,7 +17,7 @@
 #if LINUX
     #include <unistd.h>
 #elif WINDOWS
-    #error SLEEP NOT SUPPORTED IN WINDOWS YET
+    #include <windows.h>
 #else
     #error OS NOT DEFINED 
 #endif
@@ -58,7 +58,7 @@ static void renderScene_(void)
     for(ParticlesGroupHandle_t group = ParticleCloud_groupFirst(); group < ParticleCloud_groupLast(); group++)
     {
         // TODO optimize on bytes
-        glColor3f(RGB_R(group->colorId), RGB_G(group->colorId), RGB_B(group->colorId));
+        glColor3f(255, 153, 204);
         // int x = glutGet(GLUT_WINDOW_WIDTH);
         // // int y = glutGet(GLUT_WINDOW_HEIGHT);
 
@@ -89,11 +89,12 @@ static void renderScene_(void)
     {
         #if LINUX
             usleep(delaySleep * 1000000);
-            delaySeconds += delaySleep;
             
         #elif WINDOWS
-            // TODO implement in future
+            Sleep(delaySleep * 1000);
         #endif
+                    
+        delaySeconds += delaySleep;
     }
     
     oldTimestamp = currentTimestamp;

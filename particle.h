@@ -25,7 +25,7 @@ typedef struct
     float y;
 }Coords_t;
 
-typedef float color_t;
+typedef uint32_t color_t;
 
 // #define BITS_UINT32 (sizeof(uint32_t) * __CHAR_BIT__)
 
