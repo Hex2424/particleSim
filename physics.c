@@ -18,9 +18,10 @@
 #include "config.h"
 #include <time.h>
 #include <string.h>
-
+#include "vectorizedTables.h"
+#include <stdlib.h>
 // Physical constants
-#define GRAVITY_INCREASE            1E5
+#define GRAVITY_INCREASE            1E11
 
 const float GRAVITY_CONST = 6.6743E-11 * GRAVITY_INCREASE;
 // const float GRAVITY_CONST = 1;
@@ -48,21 +49,30 @@ void Physics_updatePhysics(const float deltaTime)
     
     // Acceleration matrix must be resetted each time since its not assign happening but accelerations sum
     memset(particleCloud.accelerationVectors, 0, particleCloud.particleCurrPosCounter * sizeof(AccelerationVector_t));
-    // start = clock();
+    start = clock();
+
     // Calculating new accelerations
     updateAccelerationVectors_();
-    // end = clock();
-    // cpu_time_used = ((end - start));
-    // printf("clock: %lo\n", cpu_time_used);
+    end = clock();
+    cpu_time_used = ((end - start));
+    printf("aclock: %lo\n", cpu_time_used);
+
+    start = clock();
     // Calculating new Velocities
     updateVelocityVectors_(deltaTime);
+    end = clock();
+    cpu_time_used = ((end - start));
+    printf("vclock: %lo\n", cpu_time_used);
 
+    start = clock();
     // Calculating new Coordinates
     updateCoordsVectors_(deltaTime);
+    end = clock();
+    cpu_time_used = ((end - start));
+    printf("cclock: %lo\n", cpu_time_used);
+
+
 }
-
-
-
 inline static void updateAccelerationVectors_(void)
 {
     // Now calculating particles reactions with other particles without including itselfs and already calculated connections
@@ -93,33 +103,34 @@ inline static void updateAccelerationVectors_(void)
 
                 massB = currentBGroup->physics.mass;              
 
-                // Direction for particleA, *-1 this we would get particleB direction vector
+                // // Direction for particleA, *-1 this we would get particleB direction vector
                 directionVectorA.x = prtBCoords->x - prtACoords->x;
                 directionVectorA.y = prtBCoords->y - prtACoords->y;
                 
-                float r = sqrt(directionVectorA.x * directionVectorA.x + directionVectorA.y * directionVectorA.y);
+                int32_t fvaluex = xyDivR3LookupTable[abs(directionVectorA.x)][abs(directionVectorA.y)];
+                int32_t fvaluey = xyDivR3LookupTable[abs(directionVectorA.y)][abs(directionVectorA.x)];
                 
-                if(r == 0)
+                if(directionVectorA.x < 0)
                 {
-                    r = 0.1f;
+                    fvaluex *= (-1);
                 }
 
+                if(directionVectorA.y < 0)
+                {
+                    fvaluey *= (-1);
+                }
 
-                float F = (GRAVITY_CONST * massA * massB) / r*r;
-            
-                float accelerationA = F / massA;
-                float accelerationB = F / massB; 
-            
-                // TODO later on we need sum acceleration vectors from differend physics
-                // Updating both particles accelerations
-                particleCloud.accelerationVectors[prtIdxA].ax += (directionVectorA.x / r) * accelerationA;
-                particleCloud.accelerationVectors[prtIdxA].ay += (directionVectorA.y / r) * accelerationA;
+                particleCloud.accelerationVectors[prtIdxA].ax += (fvaluex * massB);
+                particleCloud.accelerationVectors[prtIdxA].ay += (fvaluey * massB);
 
-                particleCloud.accelerationVectors[prtIdxB].ax += (-directionVectorA.x / r) * accelerationB;
-                particleCloud.accelerationVectors[prtIdxB].ay += (-directionVectorA.y / r) * accelerationB;
-                
-                Log_d(TAG, "M1:%f, M2:%f, F:%f, accA:%f, accB:%f", 
-                    massA, massB,F,accelerationA, accelerationB);
+                particleCloud.accelerationVectors[prtIdxB].ax += (-fvaluex * massA);
+                particleCloud.accelerationVectors[prtIdxB].ay += (-fvaluey * massA);
+                __asm__("nop");
+                // end = clock();
+                // cpu_time_used = ((end - start));
+                // printf("iterclock: %lo\n", cpu_time_used);
+                // Log_d(TAG, "M1:%f, M2:%f, F:%f, accA:%f, accB:%f", 
+                //     massA, massB,F,accelerationA, accelerationB);
             }
         } 
     }
@@ -131,8 +142,8 @@ inline static void updateVelocityVectors_(const float deltaTime)
     {
         // v = a * t
         // curr_v = new_v + old_v
-        particleCloud.velocityVectors[prtIdx].vx += particleCloud.accelerationVectors[prtIdx].ax * deltaTime;
-        particleCloud.velocityVectors[prtIdx].vy += particleCloud.accelerationVectors[prtIdx].ay * deltaTime;
+        particleCloud.velocityVectors[prtIdx].vx += particleCloud.accelerationVectors[prtIdx].ax * GRAVITY_CONST / TABLE_MULTIPLIER * deltaTime;
+        particleCloud.velocityVectors[prtIdx].vy += particleCloud.accelerationVectors[prtIdx].ay * GRAVITY_CONST / TABLE_MULTIPLIER * deltaTime;
     }
 }
 

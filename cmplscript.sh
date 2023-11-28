@@ -15,7 +15,7 @@ else
         vector.c -lGL -lGLU -lglut -lm -o prtLife.out"
     
     if [ "$1" == "release" ]; then
-        compile2="$compile -O3 -DLINUX -DVERBOSE_LEVEL=1"
+        compile2="$compile -O3 -DLINUX -DVERBOSE_LEVEL=1" 
     elif [ "$1" == "debug" ]; then
         compile2="$compile -O0 -DLINUX -DVERBOSE_LEVEL=3"
     else
