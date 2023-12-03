@@ -52,6 +52,9 @@ static void renderScene_(void)
     static float delaySleep = 0;
     static int oldTimestamp = 0;
     static int currentTimestamp = 0;
+    #if ENABLED_PROFILE
+        static int framesPassed = 0;
+    #endif
 
     glClear( GL_COLOR_BUFFER_BIT);
 
@@ -99,7 +102,12 @@ static void renderScene_(void)
     
     oldTimestamp = currentTimestamp;
     #if ENABLED_PROFILE
-        exit(0);
+        if(framesPassed > 10)
+        {
+            exit(0);
+        }
+
+        framesPassed++;
     #endif
     glutPostRedisplay();
 

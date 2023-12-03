@@ -60,6 +60,7 @@ void ParticleCloud_addNewGroup(const uint16_t particlesCount,
         exit(-1);
     }
 
+
     for(uint32_t particleIdx = currGroupHandle->particlesBeginPos; particleIdx < currGroupHandle->particlesEndPos; particleIdx++)
     {
         Coords_t* currParticleCoords;
@@ -69,6 +70,7 @@ void ParticleCloud_addNewGroup(const uint16_t particlesCount,
         currParticleCoords->x = (rand() % ARENA_W + 1) + 1;
         currParticleCoords->y = (rand() % ARENA_H + 1) + 1;    
     }
+    
 
     particleCloud.groupStackTop++;
     particleCloud.particleCurrPosCounter += particlesCount;

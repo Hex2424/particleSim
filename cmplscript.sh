@@ -15,7 +15,9 @@ else
         vector.c -lGL -lGLU -lglut -lm -o prtLife.out"
     
     if [ "$1" == "release" ]; then
-        compile2="$compile -O3 -DLINUX -DVERBOSE_LEVEL=1" 
+        compile2="$compile -O3 -DLINUX -DVERBOSE_LEVEL=1 -march=native"
+    elif [ "$1" == "release_p" ]; then
+        compile2="$compile -O3 -DLINUX -DVERBOSE_LEVEL=1 -march=native -fopenmp"
     elif [ "$1" == "debug" ]; then
         compile2="$compile -O0 -DLINUX -DVERBOSE_LEVEL=3"
     else
@@ -28,11 +30,11 @@ else
         $compile2
     fi
 
+    # Execute program
+    ./prtLife.out
+    
     if [ "$2" == "profile" ]; then
         gprof -l ./prtLife.out gmon.out > analysis.txt
-    else
-        # Execute program
-        ./prtLife.out
     fi
 
 fi
